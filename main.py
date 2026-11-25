@@ -31,8 +31,13 @@ def entry_text() -> str:
 def main() -> None:
     out = Path(os.environ.get("MAKEFUN_OUTPUT_DIR", "/output")) / "entry.txt"
     out.parent.mkdir(parents=True, exist_ok=True)
+    text = entry_text()
     # No trailing newline: the gate counts every character.
-    out.write_text(entry_text(), encoding="utf-8")
+    out.write_text(text, encoding="utf-8")
+    # Read back and verify the round trip: what the grader reads must be
+    # exactly the validated line, byte for byte.
+    if out.read_text(encoding="utf-8") != text:
+        raise RuntimeError("round-trip check failed: entry.txt differs")
 
 
 if __name__ == "__main__":
